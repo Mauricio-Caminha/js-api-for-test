@@ -6,7 +6,7 @@ let orders = [
     items: [{ productId: '1', quantity: 2, price: 3500 }], 
     total: 7000, 
     status: 'pending',
-    createdAt: new Date().toISOString()
+    createdAt: "2025-11-07T18:18:08.792Z"
   },
   { 
     id: '2', 
@@ -14,7 +14,7 @@ let orders = [
     items: [{ productId: '2', quantity: 1, price: 150 }], 
     total: 150, 
     status: 'completed',
-    createdAt: new Date().toISOString()
+    createdAt: "2025-11-07T18:18:08.792Z"
   },
   { 
     id: '3', 
@@ -22,7 +22,7 @@ let orders = [
     items: [{ productId: '3', quantity: 1, price: 450 }], 
     total: 450, 
     status: 'processing',
-    createdAt: new Date().toISOString()
+    createdAt: "2025-11-07T18:18:08.792Z"
   }
 ];
 
