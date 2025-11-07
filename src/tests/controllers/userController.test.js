@@ -1,8 +1,8 @@
 const { describe, it, expect, beforeEach } = require('@jest/globals');
-const userService = require('../services/userService');
-const { getAllUsers, getUserById, createUser, updateUser, deleteUser } = require('../controllers/userController');
+const userService = require('../../services/userService');
+const { getAllUsers, getUserById, createUser, updateUser, deleteUser } = require('../../controllers/userController');
 
-jest.mock('../services/userService');
+jest.mock('../../services/userService');
 
 describe('UserController', () => {
   let req, res, next;
