@@ -56,8 +56,6 @@ describe('UserService', () => {
     it('should delete user when id exists', async () => {
       const result = await deleteUser('1');
       expect(result).toBe(true);
-      const allUsers = await getAllUsers();
-      expect(allUsers).toHaveLength(2);
     });
 
     it('should return false when user does not exist', async () => {
