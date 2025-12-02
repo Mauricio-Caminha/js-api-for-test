@@ -1,29 +1,36 @@
 const request = require('supertest');
 const express = require('express');
-const orderController = require('../../src/controllers/orderController');
-const orderService = require('../../src/services/orderService');
+const orderController = require('../controllers/orderController');
+const orderService = require('../services/orderService');
 
 const app = express();
 app.use(express.json());
 app.use('/orders', orderController);
 
-jest.mock('../../src/services/orderService');
+jest.mock('../services/orderService');
 
 describe('Order Controller', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('GET /orders', () => {
     it('should return all orders', async () => {
       const mockOrders = [{ id: 1, item: 'Product 1' }, { id: 2, item: 'Product 2' }];
       orderService.getAllOrders.mockResolvedValue(mockOrders);
 
       const response = await request(app).get('/orders');
+
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockOrders);
+      expect(orderService.getAllOrders).toHaveBeenCalledTimes(1);
     });
 
     it('should handle errors', async () => {
-      orderService.getAllOrders.mockRejectedValue(new Error('Database error'));
+      orderService.getAllOrders.mockRejectedValue(new Error('Service error'));
 
       const response = await request(app).get('/orders');
+
       expect(response.status).toBe(500);
     });
   });
@@ -34,22 +41,26 @@ describe('Order Controller', () => {
       orderService.getOrderById.mockResolvedValue(mockOrder);
 
       const response = await request(app).get('/orders/1');
+
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockOrder);
+      expect(orderService.getOrderById).toHaveBeenCalledWith('1');
     });
 
     it('should return 404 if order not found', async () => {
       orderService.getOrderById.mockResolvedValue(null);
 
       const response = await request(app).get('/orders/999');
+
       expect(response.status).toBe(404);
       expect(response.body).toEqual({ error: 'Order not found' });
     });
 
     it('should handle errors', async () => {
-      orderService.getOrderById.mockRejectedValue(new Error('Database error'));
+      orderService.getOrderById.mockRejectedValue(new Error('Service error'));
 
       const response = await request(app).get('/orders/1');
+
       expect(response.status).toBe(500);
     });
   });
@@ -61,14 +72,17 @@ describe('Order Controller', () => {
       orderService.createOrder.mockResolvedValue(mockNewOrder);
 
       const response = await request(app).post('/orders').send(newOrderData);
+
       expect(response.status).toBe(201);
       expect(response.body).toEqual(mockNewOrder);
+      expect(orderService.createOrder).toHaveBeenCalledWith(newOrderData);
     });
 
     it('should handle errors', async () => {
-      orderService.createOrder.mockRejectedValue(new Error('Database error'));
+      orderService.createOrder.mockRejectedValue(new Error('Service error'));
 
       const response = await request(app).post('/orders').send({});
+
       expect(response.status).toBe(500);
     });
   });
@@ -80,47 +94,55 @@ describe('Order Controller', () => {
       orderService.updateOrder.mockResolvedValue(mockUpdatedOrder);
 
       const response = await request(app).put('/orders/1').send(updatedOrderData);
+
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockUpdatedOrder);
+      expect(orderService.updateOrder).toHaveBeenCalledWith('1', updatedOrderData);
     });
 
     it('should return 404 if order not found', async () => {
       orderService.updateOrder.mockResolvedValue(null);
 
       const response = await request(app).put('/orders/999').send({});
+
       expect(response.status).toBe(404);
       expect(response.body).toEqual({ error: 'Order not found' });
     });
 
     it('should handle errors', async () => {
-      orderService.updateOrder.mockRejectedValue(new Error('Database error'));
+      orderService.updateOrder.mockRejectedValue(new Error('Service error'));
 
       const response = await request(app).put('/orders/1').send({});
+
       expect(response.status).toBe(500);
     });
   });
 
   describe('DELETE /orders/:id', () => {
-    it('should delete an existing order', async () => {
+    it('should delete an order', async () => {
       orderService.deleteOrder.mockResolvedValue(true);
 
       const response = await request(app).delete('/orders/1');
+
       expect(response.status).toBe(200);
       expect(response.body).toEqual({ message: 'Order deleted successfully' });
+      expect(orderService.deleteOrder).toHaveBeenCalledWith('1');
     });
 
     it('should return 404 if order not found', async () => {
       orderService.deleteOrder.mockResolvedValue(false);
 
       const response = await request(app).delete('/orders/999');
+
       expect(response.status).toBe(404);
       expect(response.body).toEqual({ error: 'Order not found' });
     });
 
     it('should handle errors', async () => {
-      orderService.deleteOrder.mockRejectedValue(new Error('Database error'));
+      orderService.deleteOrder.mockRejectedValue(new Error('Service error'));
 
       const response = await request(app).delete('/orders/1');
+
       expect(response.status).toBe(500);
     });
   });
