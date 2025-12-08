@@ -1,11 +1,5 @@
 const { describe, it, expect, beforeEach } = require("@jest/globals");
-const {
-  getAllProducts,
-  getProductById,
-  createProduct,
-  updateProduct,
-  deleteProduct
-} = require("../../src/services/productService");
+const { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct } = require("../../src/services/productService");
 
 describe("Product Service", () => {
   let initialProducts;
@@ -39,40 +33,29 @@ describe("Product Service", () => {
 
   describe("createProduct", () => {
     it("should create a new product", async () => {
-      const newProductData = {
-        name: 'Monitor',
-        description: 'Monitor 24 inch',
-        price: 1200,
-        stock: 15,
-        category: 'Electronics'
-      };
-
+      const newProductData = { name: 'Monitor', description: 'Monitor 24 inch', price: 1200, stock: 15, category: 'Electronics' };
       const newProduct = await createProduct(newProductData);
       expect(newProduct).toHaveProperty('id');
       expect(newProduct.name).toBe(newProductData.name);
-      expect(newProduct.description).toBe(newProductData.description);
-      expect(newProduct.price).toBe(newProductData.price);
-      expect(newProduct.stock).toBe(newProductData.stock);
-      expect(newProduct.category).toBe(newProductData.category);
+      expect(newProduct).toHaveProperty('description', newProductData.description);
+      expect(newProduct).toHaveProperty('price', newProductData.price);
+      expect(newProduct).toHaveProperty('stock', newProductData.stock);
+      expect(newProduct).toHaveProperty('category', newProductData.category);
     });
   });
 
   describe("updateProduct", () => {
     it("should update an existing product", async () => {
-      const updatedData = {
-        name: 'Updated Notebook',
-        price: 3000
-      };
-
+      const updatedData = { name: 'Updated Notebook', price: 3000 };
       const updatedProduct = await updateProduct('1', updatedData);
-      expect(updatedProduct.name).toBe(updatedData.name);
-      expect(updatedProduct.price).toBe(updatedData.price);
-      expect(updatedProduct.id).toBe('1');
+      expect(updatedProduct).toHaveProperty('id', '1');
+      expect(updatedProduct).toHaveProperty('name', updatedData.name);
+      expect(updatedProduct).toHaveProperty('price', updatedData.price);
     });
 
     it("should return null for a non-existent product", async () => {
-      const result = await updateProduct('999', { name: 'Non-existent' });
-      expect(result).toBeNull();
+      const updatedProduct = await updateProduct('999', { name: 'Non-existent' });
+      expect(updatedProduct).toBeNull();
     });
   });
 
@@ -80,8 +63,8 @@ describe("Product Service", () => {
     it("should delete an existing product", async () => {
       const result = await deleteProduct('1');
       expect(result).toBe(true);
-      const products = await getAllProducts();
-      expect(products).toHaveLength(2);
+      const product = await getProductById('1');
+      expect(product).toBeUndefined();
     });
 
     it("should return false for a non-existent product", async () => {

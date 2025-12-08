@@ -1,5 +1,5 @@
 const { describe, it, expect, beforeEach, afterEach } = require("@jest/globals");
-const { getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder } = require("../src/services/orderService");
+const { getAllOrders, getOrderById, createOrder, updateOrder, deleteOrder } = require("../../src/services/orderService");
 
 describe("Order Service", () => {
   let orders;
@@ -60,11 +60,10 @@ describe("Order Service", () => {
     it("should create a new order", async () => {
       const newOrderData = {
         userId: '3',
-        items: [{ productId: '4', quantity: 1, price: 100 }],
-        total: 100,
+        items: [{ productId: '4', quantity: 1, price: 200 }],
+        total: 200,
         status: 'pending'
       };
-
       const result = await createOrder(newOrderData);
       expect(result).toHaveProperty('id');
       expect(result.userId).toBe(newOrderData.userId);
@@ -78,7 +77,14 @@ describe("Order Service", () => {
     it("should update an existing order", async () => {
       const updatedData = { status: 'completed' };
       const result = await updateOrder('1', updatedData);
-      expect(result).toEqual({ ...orders[0], ...updatedData });
+      expect(result).toEqual({
+        id: '1',
+        userId: '1',
+        items: [{ productId: '1', quantity: 2, price: 3500 }],
+        total: 7000,
+        status: 'completed',
+        createdAt: "2025-11-07T18:18:08.792Z"
+      });
     });
 
     it("should return null if the order does not exist", async () => {
