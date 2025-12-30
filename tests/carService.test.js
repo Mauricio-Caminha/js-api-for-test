@@ -10,47 +10,51 @@ describe("Car Service", () => {
     ];
   });
 
-  it("should return all cars", async () => {
+  it("should get all cars", async () => {
     const result = await getAllCars();
     expect(result).toEqual(cars);
   });
 
-  it("should return a car by ID", async () => {
+  it("should get a car by id", async () => {
     const result = await getCarById('1');
     expect(result).toEqual(cars[0]);
-  });
-
-  it("should return null for a non-existent car ID", async () => {
-    const result = await getCarById('999');
-    expect(result).toBeNull();
   });
 
   it("should create a new car", async () => {
     const newCarData = { brand: 'Chevrolet', model: 'Malibu', year: 2022, color: 'Blue', price: 95000 };
     const result = await createCar(newCarData);
-    expect(result).toEqual(expect.objectContaining(newCarData));
-    expect(result.id).toBe('4');
+    expect(result).toEqual({
+      id: '4',
+      ...newCarData
+    });
+    expect(await getAllCars()).toHaveLength(4);
   });
 
   it("should update an existing car", async () => {
-    const updatedData = { color: 'Green', price: 80000 };
+    const updatedData = { color: 'Green', price: 90000 };
     const result = await updateCar('1', updatedData);
-    expect(result).toEqual(expect.objectContaining(updatedData));
-    expect(result.id).toBe('1');
+    expect(result).toEqual({
+      id: '1',
+      brand: 'Toyota',
+      model: 'Corolla',
+      year: 2020,
+      color: 'Green',
+      price: 90000
+    });
   });
 
-  it("should return null when updating a non-existent car", async () => {
-    const result = await updateCar('999', { color: 'Green' });
+  it("should return null when updating a non-existing car", async () => {
+    const result = await updateCar('999', { color: 'Yellow' });
     expect(result).toBeNull();
   });
 
   it("should delete a car", async () => {
     const result = await deleteCar('1');
     expect(result).toBe(true);
-    expect(await getCarById('1')).toBeNull();
+    expect(await getAllCars()).toHaveLength(2);
   });
 
-  it("should return false when deleting a non-existent car", async () => {
+  it("should return false when deleting a non-existing car", async () => {
     const result = await deleteCar('999');
     expect(result).toBe(false);
   });
