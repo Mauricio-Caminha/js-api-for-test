@@ -1,8 +1,11 @@
+const { describe, it, expect, beforeEach } = require("@jest/globals");
 const { getAllUsers, getUserById, createUser, updateUser, deleteUser } = require("../src/services/userService");
 
 describe("User Service", () => {
+  let users;
+
   beforeEach(() => {
-    // Reset the in-memory database before each test
+    // Reset the in-memory database
     users = [
       { id: '1', name: 'João Silva', email: 'joao@example.com', age: 30 },
       { id: '2', name: 'Maria Santos', email: 'maria@example.com', age: 25 },
@@ -10,17 +13,17 @@ describe("User Service", () => {
     ];
   });
 
-  it("should return all users", async () => {
+  it("should get all users", async () => {
     const result = await getAllUsers();
     expect(result).toEqual(users);
   });
 
-  it("should return a user by ID", async () => {
+  it("should get user by id", async () => {
     const result = await getUserById('1');
     expect(result).toEqual(users[0]);
   });
 
-  it("should return null for a non-existing user ID", async () => {
+  it("should return undefined for non-existing user", async () => {
     const result = await getUserById('999');
     expect(result).toBeUndefined();
   });
@@ -28,31 +31,30 @@ describe("User Service", () => {
   it("should create a new user", async () => {
     const newUser = { name: 'Ana Costa', email: 'ana@example.com', age: 28 };
     const result = await createUser(newUser);
-    expect(result).toHaveProperty('id');
-    expect(result.name).toBe(newUser.name);
-    expect(result.email).toBe(newUser.email);
-    expect(result.age).toBe(newUser.age);
+    expect(result).toEqual({ id: '4', ...newUser });
+    const allUsers = await getAllUsers();
+    expect(allUsers).toHaveLength(4);
   });
 
   it("should update an existing user", async () => {
-    const updatedData = { name: 'João Silva Updated', age: 31 };
-    const result = await updateUser('1', updatedData);
-    expect(result.name).toBe(updatedData.name);
-    expect(result.age).toBe(updatedData.age);
+    const updatedUser = { name: 'João Silva Updated', age: 31 };
+    const result = await updateUser('1', updatedUser);
+    expect(result).toEqual({ id: '1', name: 'João Silva Updated', email: 'joao@example.com', age: 31 });
   });
 
-  it("should return null when updating a non-existing user", async () => {
-    const result = await updateUser('999', { name: 'Non-existent User' });
+  it("should return null for updating non-existing user", async () => {
+    const result = await updateUser('999', { name: 'Non-existing User' });
     expect(result).toBeNull();
   });
 
   it("should delete an existing user", async () => {
     const result = await deleteUser('1');
     expect(result).toBe(true);
-    expect(await getUserById('1')).toBeUndefined();
+    const allUsers = await getAllUsers();
+    expect(allUsers).toHaveLength(2);
   });
 
-  it("should return false when deleting a non-existing user", async () => {
+  it("should return false for deleting non-existing user", async () => {
     const result = await deleteUser('999');
     expect(result).toBe(false);
   });
