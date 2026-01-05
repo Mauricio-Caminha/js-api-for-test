@@ -10,14 +10,19 @@ describe("Car Service", () => {
     ];
   });
 
-  it("should get all cars", async () => {
+  it("should return all cars", async () => {
     const result = await getAllCars();
     expect(result).toEqual(cars);
   });
 
-  it("should get a car by id", async () => {
+  it("should return a car by id", async () => {
     const result = await getCarById('1');
     expect(result).toEqual(cars[0]);
+  });
+
+  it("should return null for a non-existing car id", async () => {
+    const result = await getCarById('999');
+    expect(result).toBeUndefined();
   });
 
   it("should create a new car", async () => {
@@ -34,11 +39,11 @@ describe("Car Service", () => {
   });
 
   it("should return null when updating a non-existing car", async () => {
-    const result = await updateCar('999', { color: 'Yellow' });
+    const result = await updateCar('999', { color: 'Blue' });
     expect(result).toBeNull();
   });
 
-  it("should delete a car", async () => {
+  it("should delete an existing car", async () => {
     const result = await deleteCar('1');
     expect(result).toBe(true);
     expect(await getAllCars()).toHaveLength(2);
