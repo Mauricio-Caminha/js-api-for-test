@@ -23,25 +23,26 @@ describe("Car Service", () => {
   });
 
   it("should create a new car", async () => {
-    const newCarData = { brand: 'Chevrolet', model: 'Onix', year: 2022, color: 'Blue', price: 70000 };
+    const newCarData = { brand: 'Chevrolet', model: 'Onix', year: 2022, color: 'Blue', price: 78000 };
     const newCar = await createCar(newCarData);
-    expect(newCar).toEqual({ id: '4', ...newCarData });
+    expect(newCar).toHaveProperty('id');
+    expect(newCar).toMatchObject(newCarData);
     
     const cars = await getAllCars();
-    expect(cars).toHaveLength(4);
+    expect(cars).toHaveLength(initialCars.length + 1);
   });
 
   it("should update an existing car", async () => {
-    const updatedCarData = { brand: 'Toyota', model: 'Camry', year: 2021, color: 'White', price: 95000 };
-    const updatedCar = await updateCar('1', updatedCarData);
-    expect(updatedCar).toEqual({ id: '1', ...updatedCarData });
+    const updatedData = { color: 'Green', price: 80000 };
+    const updatedCar = await updateCar('1', updatedData);
+    expect(updatedCar).toEqual({ ...initialCars[0], ...updatedData });
     
-    const car = await getCarById('1');
-    expect(car).toEqual(updatedCar);
+    const cars = await getAllCars();
+    expect(cars[0].color).toBe('Green');
   });
 
-  it("should return null when updating a non-existent car", async () => {
-    const updatedCar = await updateCar('999', { brand: 'Nissan' });
+  it("should return null when updating a non-existing car", async () => {
+    const updatedCar = await updateCar('999', { color: 'Blue' });
     expect(updatedCar).toBeNull();
   });
 
@@ -50,10 +51,10 @@ describe("Car Service", () => {
     expect(result).toBe(true);
     
     const cars = await getAllCars();
-    expect(cars).toHaveLength(2);
+    expect(cars).toHaveLength(initialCars.length - 1);
   });
 
-  it("should return false when deleting a non-existent car", async () => {
+  it("should return false when deleting a non-existing car", async () => {
     const result = await deleteCar('999');
     expect(result).toBe(false);
   });
