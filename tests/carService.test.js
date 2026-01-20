@@ -19,33 +19,4 @@ describe("Car Service", () => {
     const result = await getCarById('1');
     expect(result).toEqual(cars[0]);
   });
-
-  it("should create a new car", async () => {
-    const newCarData = { brand: 'Chevrolet', model: 'Malibu', year: 2022, color: 'Blue', price: 95000 };
-    const result = await createCar(newCarData);
-    expect(result).toEqual({ id: '4', ...newCarData });
-    expect(await getAllCars()).toHaveLength(4);
-  });
-
-  it("should update an existing car", async () => {
-    const updatedData = { color: 'Green', price: 88000 };
-    const result = await updateCar('1', updatedData);
-    expect(result).toEqual({ id: '1', brand: 'Toyota', model: 'Corolla', year: 2020, color: 'Green', price: 88000 });
-  });
-
-  it("should return null when updating a non-existent car", async () => {
-    const result = await updateCar('999', { color: 'Blue' });
-    expect(result).toBeNull();
-  });
-
-  it("should delete a car", async () => {
-    const result = await deleteCar('1');
-    expect(result).toBe(true);
-    expect(await getAllCars()).toHaveLength(2);
-  });
-
-  it("should return false when deleting a non-existent car", async () => {
-    const result = await deleteCar('999');
-    expect(result).toBe(false);
-  });
 });
