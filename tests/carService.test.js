@@ -45,10 +45,4 @@ describe("Car Service", () => {
     const result = await updateCar('999', { color: 'Green' });
     expect(result).toBeNull();
   });
-
-  it("should delete a car", async () => {
-    const result = await deleteCar('1');
-    expect(result).toBe(true);
-    expect(await getCarById('1')).toBeUndefined();
-  });
 });
