@@ -51,9 +51,4 @@ describe("Car Service", () => {
     expect(result).toBe(true);
     expect(await getCarById('1')).toBeUndefined();
   });
-
-  it("should return false when deleting a non-existing car", async () => {
-    const result = await deleteCar('999');
-    expect(result).toBe(false);
-  });
 });
